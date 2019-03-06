@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 using GameEngine;
 using GameEngine.Games;
 using GameEngine.Players;
@@ -48,8 +49,11 @@ namespace GuessTheWeight
 
             NewPlayerType = PlayerType.Cheater;
             GameRules = GameRules.DefaultGameRules;
+            
 
             InitializeComponent();
+
+            Result = null;
         }
 
         private void AddNewPlayerButtonClick(object sender, RoutedEventArgs e)
@@ -67,6 +71,7 @@ namespace GuessTheWeight
             }
 
             Players.Add(PlayerFactory.CreatePlayer(NewPlayerName, NewPlayerType));
+            NewPlayerName = string.Empty;
         }
 
         private async void StartgameButtonClick(object sender, RoutedEventArgs e)
@@ -75,9 +80,13 @@ namespace GuessTheWeight
             Result = await GameFactory.CreateGame(Players.ToList()).Start(GameRules);
         }
 
-        private void RemoveLastplayerButtonClick(object sender, RoutedEventArgs e)
+        private void DeletePlayerButtonClick(object sender, RoutedEventArgs e)
         {
-            Players.Remove(Players.Last());
+            var player = (sender as Button).DataContext as Player;
+            if (player == null)
+                return;
+
+            Players.Remove(player);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
