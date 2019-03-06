@@ -1,0 +1,112 @@
+﻿<Window x:Class="GuessTheWeight.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converters="clr-namespace:GuessTheWeight.Converters"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="800" Width="1024" DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <Grid>
+        <Grid.Resources>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="FontSize" Value="15"/>
+                <Setter Property="Margin" Value="5,5,0,5"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="FontSize" Value="15"/>
+                <Setter Property="Margin" Value="5,1,0,1"/>
+                <Setter Property="Height" Value="25"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+            </Style>
+            <converters:PlayerToTypeConverter x:Key="PlayerToTypeConverter"/>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="Rules"  HorizontalAlignment="Center" FontSize="18"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="2">
+            <TextBlock Text="Min Weight:" FontSize="18"/>
+            <TextBox Width="70" Text="{Binding GameRules.MinWeight}"/>
+            <TextBlock Text="Max Weight:" FontSize="18"/>
+            <TextBox Width="70" Text="{Binding GameRules.MaxWeight}"/>
+            <TextBlock Text="Turns count:" FontSize="18"/>
+            <TextBox Width="70" Text="{Binding GameRules.TurnsCount}"/>
+            <TextBlock Text="Timeout(ms):" FontSize="18"/>
+            <TextBox Width="70" Text="{Binding GameRules.Timeout}"/>
+            <TextBlock Text="Answer:" FontSize="18"/>
+            <TextBox Width="70" Text="{Binding GameRules.Answer}"/>
+            <Button Width="100" Height="25" Margin="5" Content="Start game" Click="StartgameButtonClick"/>
+        </StackPanel>
+        <TextBlock Grid.Row="2" Text="Players"  HorizontalAlignment="Center" FontSize="18"/>
+        <StackPanel Grid.Row="3" Orientation="Horizontal">
+            <TextBlock Text="Name:"/>
+            <TextBox Width="150" Text="{Binding NewPlayerName, Mode=TwoWay}"/>
+            <TextBlock Text="Type:"/>
+            <ComboBox Width="150" Height="25" ItemsSource="{Binding Path=NewPlayerType, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}" VerticalContentAlignment="Center" Margin="5,1,0,1" DisplayMemberPath="Description" SelectedValue="{Binding Path=NewPlayerType}" SelectedValuePath="Value"/>
+            <Button Width="120" Height="25" Margin="5" Content="Add new player" Click="AddNewPlayerButtonClick"/>
+            <Button Width="120" Height="25" Margin="5" Content="Remove last player" Click="RemoveLastplayerButtonClick"/>
+        </StackPanel>
+        <ListBox Grid.Row="4" ItemsSource="{Binding Players}">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <ContentPresenter/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Margin="5" FontSize="15" Text="{Binding Name}"/>
+                        <TextBlock Grid.Column="1" Margin="5" FontSize="15" Text="{Binding Converter={StaticResource PlayerToTypeConverter}}"/>
+                        <ItemsControl Grid.Column="2" ItemsSource="{Binding Attempts}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderThickness="1" BorderBrush="LightSlateGray" Background="FloralWhite" CornerRadius="2" MinWidth="30" Margin="2,2,0,2" Height="20">
+                                        <TextBlock Text="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="2"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <TextBlock Grid.Row="5" Text="Results" HorizontalAlignment="Center" FontSize="18"/>
+        <StackPanel Grid.Row="6" Orientation="Vertical">
+            <TextBlock Text="Game result:" FontSize="18"/>
+            <TextBlock Text="{Binding Result.Status, Mode=OneWay}"/>
+            <TextBlock Text="Winner:" FontSize="18"/>
+            <TextBlock Text="{Binding Result.Winner.Name, Mode=OneWay}"/>
+            <TextBlock Text="Total attemts count:" FontSize="18"/>
+            <TextBlock Text="{Binding Result.AttemptsCount, Mode=OneWay}"/>
+            <TextBlock Text="Closest player:" FontSize="18"/>
+            <TextBlock Text="{Binding Result.ClosestPlayer.Name, Mode=OneWay}"/>
+            <TextBlock Text="Closest player guess:" FontSize="18"/>
+            <TextBlock Text="{Binding Result.ClosestPlayerGuess, Mode=OneWay}"/>
+            <TextBlock Text="Error:" FontSize="18"/>
+            <TextBlock Text="{Binding Result.ErrorMessage, Mode=OneWay}"/>
+        </StackPanel>
+    </Grid>
+</Window>
